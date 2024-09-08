@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Run Website</title>
+    <hz>https://cors-anywhere.herokuapp.com/corsdemo</hz>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: Arial, sans-serif;
+        }
+        #urlInput {
+            margin-top: 20px;
+            width: 80%;
+            max-width: 600px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        #loadButton {
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        #content {
+            margin-top: 20px;
+            width: 100%;
+            max-width: 800px;
+            height: 70vh;
+            overflow: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+    </style>
+    <script>
+        // Check if user is logged in
+        window.onload = function() {
+            const loggedInUser = localStorage.getItem('loggedInUser');
+            if (!loggedInUser) {
+                window.location.href = 'index.html';
+            }
+        };
+    </script>
+</head>
+<body>
+    <h1>Run Website</h1>
+    <input type="text" id="urlInput" placeholder="Enter URL here">
+    <button id="loadButton">Load Website</button>
+    <div id="content"></div>
+
+    <script>
+        document.getElementById('loadButton').addEventListener('click', function() {
+            var url = document.getElementById('urlInput').value;
+            if (url) {
+                // Ensure the URL starts with http:// or https://
+                if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                    url = 'http://' + url;
+                }
+                fetch('https://cors-anywhere.herokuapp.com/' + url)
+                    .then(response => response.text())
+                    .then(data => {
+                        document.getElementById('content').innerHTML = data;
+                        interceptLinks();
+                    })
+                    .catch(error => {
+                        document.getElementById('content').innerHTML = 'Error loading content';
+                    });
+            }
+        });
+
+        function interceptLinks() {
+            const links = document.querySelectorAll('#content a');
+            links.forEach(link => {
+                link.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    const newUrl = link.href;
+                    fetch('https://cors-anywhere.herokuapp.com/' + newUrl)
+                        .then(response => response.text())
+                        .then(data => {
+                            document.getElementById('content').innerHTML = data;
+                            interceptLinks();
+                        })
+                        .catch(error => {
+                            document.getElementById('content').innerHTML = 'Error loading content';
+                        });
+                });
+            });
+        }
+    </script>
+</body>
+</html>

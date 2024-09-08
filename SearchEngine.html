@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google CSE</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: Arial, sans-serif;
+        }
+        #search-box {
+            margin-top: 20px;
+            width: 100%;
+            max-width: 800px;
+        }
+        #search-results {
+            margin-top: 20px;
+            width: 100%;
+            max-width: 800px;
+            height: 30vh; /* Adjust based on your needs */
+            overflow: auto;
+        }
+        #embeddedSite {
+            width: 100%;
+            height: 60vh; /* Adjust based on your needs */
+            border: none;
+        }
+    </style>
+    <script>
+        // Check if user is logged in
+        window.onload = function() {
+            const loggedInUser = localStorage.getItem('loggedInUser');
+            if (!loggedInUser) {
+                window.location.href = 'index.html';
+            }
+        };
+    </script>
+</head>
+<body>
+    <h1>Search with Google</h1>
+    <div id="search-box">
+        <script async src="https://cse.google.com/cse.js?cx=f2afc330890dc47fe"></script>
+        <div class="gcse-search"></div>
+    </div>
+    <div id="search-results">
+        <!-- Google CSE will render the search results here -->
+    </div>
+    <iframe id="embeddedSite"></iframe>
+
+    <script>
+        (function() {
+            var cx = 'f2afc330890dc47fe'; // Your Custom Search Engine ID
+            var gcse = document.createElement('script');
+            gcse.type = 'text/javascript';
+            gcse.async = true;
+            gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(gcse, s);
+        })();
+
+        document.addEventListener('click', function(e) {
+            if (e.target && e.target.nodeName == 'A' && e.target.href) {
+                e.preventDefault();
+                document.getElementById('embeddedSite').src = e.target.href;
+            }
+        });
+    </script>
+</body>
+</html>
